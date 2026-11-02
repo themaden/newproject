@@ -1,0 +1,30 @@
+services:
+  api:
+    build: .
+    env_file: .env
+    environment:
+      OLLAMA_URL: http://ollama:11434
+      QDRANT_URL: http://qdrant:6333
+      DEMO_DB_PATH: /srv/app/data/demo_sales.sqlite
+    ports:
+      - '127.0.0.1:8000:8000'
+    volumes:
+      - demo_data:/srv/app/data
+    depends_on:
+      - ollama
+      - qdrant
+    restart: unless-stopped
+  qdrant:
+    image: qdrant/qdrant:v1.15.5
+    volumes:
+      - qdrant_data:/qdrant/storage
+    restart: unless-stopped
+  ollama:
+    image: ollama/ollama:0.12.6
+    volumes:
+      - ollama_data:/root/.ollama
+    restart: unless-stopped
+volumes:
+  qdrant_data:
+  ollama_data:
+  demo_data:
